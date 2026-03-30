@@ -257,6 +257,7 @@ name = "deno-io-windows-repro"
 version = "0.1.0"
 dependencies = [
  "deno_io",
+ "winapi",
 ]
 
 [[package]]
