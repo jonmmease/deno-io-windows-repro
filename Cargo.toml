@@ -9,7 +9,7 @@ deno_io = "0.152.0"
 # Direct dep so we can toggle the `std` feature via our own `fix` feature.
 # Pinned to match deno_io's exact requirement.
 [target.'cfg(windows)'.dependencies]
-winapi = { version = "=0.3.9" }
+winapi = { version = "0.3" }
 
 [features]
 # Enables winapi/std, making winapi::ctypes::c_void an alias for
