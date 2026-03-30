@@ -1,0 +1,7 @@
+[package]
+name = "deno-io-windows-repro"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+deno_io = "0.152.0"
