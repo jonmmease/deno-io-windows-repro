@@ -13,5 +13,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
-      - run: cargo update -p libc --precise ${{ matrix.libc }}
+      # For libc 0.2.172 (Deno's pin), also pin mio and rustix which otherwise
+      # force libc >= 0.2.183 via their own minimum version requirements.
+      - if: matrix.libc == '0.2.172'
+        run: |
+          cargo update -p mio --precise 1.0.3
+          cargo update -p rustix --precise 0.38.34
+          cargo update -p libc --precise 0.2.172
       - run: cargo check
