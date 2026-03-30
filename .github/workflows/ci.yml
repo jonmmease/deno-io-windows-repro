@@ -7,12 +7,11 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
-        # 1.80.1: version Deno pins in rust-toolchain.toml — expected to pass everywhere
-        # 1.94.1: first stable where libc::c_void diverges from winapi::ctypes::c_void — expected to fail on Windows
-        rust: ["1.80.1", "1.94.1"]
+        # 0.2.172: version pinned by Deno's Cargo.lock — expected to pass everywhere
+        # 0.2.183: introduced c_void re-export change — expected to fail on Windows
+        libc: ["0.2.172", "0.2.183"]
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: ${{ matrix.rust }}
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo update -p libc --precise ${{ matrix.libc }}
       - run: cargo check
