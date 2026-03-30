@@ -7,17 +7,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
-        # 0.2.172: version pinned by Deno's Cargo.lock — expected to pass everywhere
-        # 0.2.183: introduced c_void re-export change — expected to fail on Windows
-        libc: ["0.2.172", "0.2.183"]
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
-      # For libc 0.2.172 (Deno's pin), also pin mio and rustix which otherwise
-      # force libc >= 0.2.183 via their own minimum version requirements.
-      - if: matrix.libc == '0.2.172'
-        run: |
-          cargo update -p mio --precise 1.0.3
-          cargo update -p rustix --precise 0.38.34
-          cargo update -p libc --precise 0.2.172
       - run: cargo check

@@ -8,7 +8,9 @@ Minimal reproduction of a Windows compile failure in [`deno_io`](https://crates.
 
 ## Root cause
 
-`deno_io` uses the `winapi` crate, which defines its own `winapi::ctypes::c_void` type. On modern Rust + `libc >= 0.2.183`, `libc::c_void` re-exports `core::ffi::c_void` — a distinct type from `winapi::ctypes::c_void`. Code in `deno_io` that passes handles between winapi functions and std's `RawHandle`/`FromRawHandle` hits `E0308` type mismatches.
+`deno_io` uses the `winapi` crate, which defines its own `winapi::ctypes::c_void` as `pub enum c_void {}`. This is a distinct type from `core::ffi::c_void` (which `std::ffi::c_void` and `libc::c_void` both alias). Code in `deno_io` that passes handles between winapi functions and std's `RawHandle`/`FromRawHandle` hits `E0308` type mismatches because `RawHandle = *mut std::ffi::c_void` but winapi returns `*mut winapi::ctypes::c_void`.
+
+The bug was latent in the source — it only surfaces when the relevant `winapi` features (`handleapi`, `winbase`, `processenv`) are enabled. `deno_io` enables these features in its own `Cargo.toml`, so any project depending on `deno_io` directly will hit this on Windows.
 
 ## Error locations in `deno_io`
 
